@@ -17,23 +17,26 @@ class AnmeldeForm(forms.Form):
     exkurs2 = forms.IntegerField(required=False)
 
     def clean_email(self):
-        s = Student.objects.filter(email__istartswith=self.cleaned_data['email'])
+        s = Student.objects.filter(email__iexact=self.cleaned_data['email'])
+        
+	if not len(s) == 0:
+	    s = s[0]
+	    if s.vorname != self.cleaned_data['vorname'] or s.nachname != self.cleaned_data['nachname']:
+                self._errors['email'] = self.error_class([u'Diese Email ist bereits für jemand anderen angemeldet?!'])
+                if 'email' in self.cleaned_data:
+                    del self.cleaned_data['email']
+                return None
 
-        if not len(s) == 0:
-            self._errors['email'] = self.error_class([u'Diese Email ist bereits angemeldet, für Änderungen bitte Mail an fom@tobyf.de'])
-            if 'email' in self.cleaned_data:
-                del self.cleaned_data['email']
-        else:
-            return self.cleaned_data['email']
+	return self.cleaned_data['email']
 
     def clean_exkurs1(self):
 
-        if not self.cleaned_data['exkurs1']:
+        if not self.cleaned_data['exkurs1'] or self.cleaned_data['exkurs1'] == 0:
             return None
 
         e = Exkursion.objects.filter(id=self.cleaned_data['exkurs1'], anzeige=1)
 
-        if not len(e) == 1:
+        if not len(e) == 1 or e[0].getTeilnehmerCount() >= e[0].maxTeilnehmer:
             self._errors['exkurs1'] = self.error_class([u'Falsche ID!'])
             if 'exkurs1' in self.cleaned_data:
                 del self.cleaned_data['exkurs1']
@@ -42,12 +45,12 @@ class AnmeldeForm(forms.Form):
 
     def clean_exkurs2(self):
 
-        if not self.cleaned_data['exkurs2']:
+        if not self.cleaned_data['exkurs2'] or self.cleaned_data['exkurs2'] == 0:
             return None
 
         e = Exkursion.objects.filter(id=self.cleaned_data['exkurs2'], anzeige=2)
 
-        if not len(e) == 1:
+        if not len(e) == 1 or e[0].getTeilnehmerCount() >= e[0].maxTeilnehmer:
             self._errors['exkurs2'] = self.error_class([u'Falsche ID!'])
             if 'exkurs2' in self.cleaned_data:
                 del self.cleaned_data['exkurs2']
@@ -71,7 +74,11 @@ class AnmeldeFormPreview(FormPreview):
         # Do something with the cleaned_data, then redirect
         # to a "success" page.
 
-        s = Student()
+	try:
+            s = Student.objects.get(email__iexact=cleaned_data['email'], vorname__iexact=cleaned_data['vorname'], nachname__iexact=cleaned_data['nachname'])
+        except Exception:
+	    s = Student()
+
         s.vorname = cleaned_data['vorname']
         s.nachname = cleaned_data['nachname']
         s.email = cleaned_data['email']
@@ -80,9 +87,13 @@ class AnmeldeFormPreview(FormPreview):
 
         if cleaned_data['exkurs1']:
             s.exkurs1 = Exkursion.objects.get(id=cleaned_data['exkurs1'])
+	else:
+	    s.exkurs1 = None
 
         if cleaned_data['exkurs2']:
             s.exkurs2 = Exkursion.objects.get(id=cleaned_data['exkurs2'])
+	else:
+	    s.exkurs2 = None
 
         s.save()
 

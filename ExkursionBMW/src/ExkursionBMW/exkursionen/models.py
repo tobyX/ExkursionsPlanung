@@ -12,6 +12,9 @@ class Exkursion(models.Model):
     def __unicode__(self):
         return self.bezeichnung
 
+    def getKostenProTeilnehmer(self):
+        return self.kosten / self.maxTeilnehmer
+
     def getTeilnehmer(self):
         students = []
 

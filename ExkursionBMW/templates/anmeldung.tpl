@@ -36,13 +36,14 @@
     	{% for ex in exkurs %}
 		<p class="checkbox">
         	<input type="radio" name="exkurs{{ id }}" value="{{ ex.id }}"
-        	{% if ex.maxTeilnehmer <= ex.student_set.count %} disabled="disabled"{% endif %}
+        	{% if ex.maxTeilnehmer <= ex.getTeilnehmerCount %} disabled="disabled"{% endif %}
         	{% if form.exkurs1.data|slugify == ex.id|slugify or form.exkurs2.data|slugify == ex.id|slugify %} checked="checked"{% endif %} />
 		<label for="exkurs{{id}}"><b>{{ ex.bezeichnung }}</b> <br />
 			{% if ex.bezeichnung != 'Warteliste' %}
         		<b>Startzeit: {{ ex.startzeit }}</b><br />
         		Dauer: {{ ex.dauer }} Minuten<br />
         		Maximale/Aktuelle Teilnehmer: {{ ex.maxTeilnehmer }} / {{ ex.getTeilnehmerCount }}<br />
+			Kosten pro Teilnehmer: {{ ex.getKostenProTeilnehmer|floatformat:"2" }} Euro<br />
         		Beschreibung: <br />
         		{{ ex.beschreibung }}
 			{% endif %}
