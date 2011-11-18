@@ -3,7 +3,7 @@
 <head>
 	{% load static %}
 	{% get_static_prefix as STATIC_PREFIX %}
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>Exkursion BMW</title>
 	<link href="{{ STATIC_PREFIX }}cars-website-template.css" rel="stylesheet" type="text/css" />
 </head>

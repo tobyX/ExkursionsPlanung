@@ -9,7 +9,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-ROOT_PATH = '/home/toby/Projekte/ExkursionBMW/'
+ROOT_PATH = '/home/toby/Projekte/git/ExkursionsPlanung/ExkursionBMW/'
 
 DATABASES = {
     'default': {

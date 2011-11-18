@@ -11,7 +11,7 @@
         <h3>Teilnehmer {{ ex.getTeilnehmerCount }}</h3>
         <ul>
         {% for teilnehmer in ex.getTeilnehmer %}
-            <li>{{ teilnehmer.nachname }}, {{ teilnehmer.vorname }}</li>
+            <li>{{ teilnehmer.nachname }}, {{ teilnehmer.vorname }} {% if teilnehmer.hatBezahlt %}&#x2714;{% endif %}</li>
         {% endfor %}
         </ul>
         <hr>
